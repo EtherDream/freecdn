@@ -1,0 +1,3 @@
+https://ajax.cdnjs.com/ajax/libs/jquery/3.2.1/jquery.js
+https://ajax.cdnjs.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css
+https://ajax.cdnjs.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js

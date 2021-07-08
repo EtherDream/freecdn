@@ -1,0 +1,65 @@
+# 简介
+
+本文讲解透明接入模式的原理和实现。
+
+
+# 起因
+
+freecdn 普通接入方式，是在每个页面头部插入一个脚本：
+
+```html
+<script src="/freecdn-loader.min.js"></script>
+```
+
+这种方式虽然简单，但存在一个问题：由于首次访问时 Service Worker 尚未安装，因此无法拦截页面中较早出现的资源。这些资源仍从原始 URL 加载，而不是从公共 CDN。为此 freecdn 会在 Service Worker 安装完成后自动刷新页面，终止从原始 URL 加载资源，减少流量消耗。
+
+但刷新时存在较为明显的感知，并且不少资源已从原始 URL 加载了一部分甚至加载完成，导致不必要的浪费。
+
+为了提供更好的用户体验，同时减少流量消耗，本项目提供透明接入模式。
+
+
+# 原理
+
+我们在网站后端做一些策略，用户访问任意路径都返回 Service Worker 安装页；安装完成后页面自动刷新，进而将所有请求都交给 Service Worker 处理。这样，页面中所有资源（甚至页面自身）也能通过 CDN 加速，而不会出现遗漏。
+
+如果 Service Worker 安装失败，程序会在 cookie 中设置一个标记，然后自动刷新重新请求页面。后端检测到该 cookie 存在时，返回原始内容而不是安装页，从而兼容安装失败的用户。
+
+
+# 优点
+
+由于访问任意路径都会先安装 Service Worker，因此网站所有资源都可直接从免费 CDN 加载，而不会请求你的站点。你的站点只需提供安装页、启动脚本、清单文件（每个文件最小只需几百字节），即可让用户浏览所有内容，无论内容有多少。
+
+更好的是，**首次访问非 HTML 类型的资源也能加速**。例如 https://freecdn.etherdream.com/bigpic-progress.jpg ，如果没有透明模式，这个图片只能从原站点加载；使用透明模式后，原站点仅返回一个安装页，图片最终从免费 CDN 加载，并且界面风格和直接访问图片完全一样。（新建一个隐身窗口，打开控制台，切换到网络栏，勾选保留日志，粘贴该 URL 进行访问，即可观察细节）
+
+
+## 接入
+
+目前仅提供 [nginx 配置](../../examples/nginx)，其他服务可参考配置，实现等价的逻辑。
+
+
+# 请求类型
+
+如果访问任意路径都返回 Service Worker 安装页，那么蜘蛛、爬虫等工具无法获得真实内容。并且被外链的资源也会失效，例如其他站点通过 `<img>` 引用了你网站的图片，但是你返回的却是一个安装页，这显然有问题。
+
+因此后端需检测请求的目标类型。目前较新的浏览器支持 [Fetch Metadata](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode) 标准，每个请求会带上 `sec-fetch-*` 相关的头，用于标记该请求的用途、类型等信息。
+
+我们只在用户访问顶层页面（请求头 `sec-fetch-dest` = `document`）时才返回安装页，其他通过 `<img>`、`<iframe>`、`fetch()` 等方式加载的资源，仍返回原始内容。
+
+> Service Worker 产生的请求 `sec-fetch-dest` = `empty`，所以后端不会返回安装页，不会出现循环安装的现象。
+
+
+# 所有条件
+
+请求满足以下任何一个条件，服务端返回原始内容，都不满足才返回安装页。
+
+* `http_sec_fetch_dest` != `document` （非顶层页面的资源）
+
+* `http_pragma` = `no-cache` （强制刷新时 Service Worker 会失效）
+
+* `method` != `GET`
+
+* `request_uri` ~ `^/freecdn-|freecdn__=0` （内部路径，或不支持 Cookie）
+
+* `http_referer` ~ `freecdn__=0` （不支持 Cookie）
+
+* `cookie_freecdn` = `0` （Service Worker 无法开启）

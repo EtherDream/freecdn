@@ -1,0 +1,59 @@
+{
+  "name": "freecdn",
+  "version": "0.0.12",
+  "author": "EtherDream",
+  "license": "MIT",
+  "description": "A tool that can reduce website bandwidth costs",
+  "keywords": [
+    "CDN",
+    "web",
+    "javascript",
+    "serviceworker"
+  ],
+  "homepage": "https://github.com/EtherDream/freecdn",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EtherDream/freecdn"
+  },
+  "bugs": {
+    "url": "https://github.com/EtherDream/freecdn/issues"
+  },
+  "engines": {
+    "node": ">=15"
+  },
+  "bin": {
+    "freecdn": "bin/freecdn"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "dependencies": {
+    "colors": "^1.4.0",
+    "commander": "^8.0.0",
+    "freecdn-js": "^0.0.24",
+    "freecdn-publib": "^0.0.6",
+    "glob": "^7.1.7",
+    "node-fetch": "^2.6.1",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.4",
+    "@types/node": "^16.0.1",
+    "@types/node-fetch": "^2.5.11",
+    "@types/sqlite3": "^3.1.7",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "chai": "^4.3.4",
+    "express": "^4.17.1",
+    "mocha": "^9.0.2",
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "dev": "tsc -w",
+    "build": "tsc",
+    "test": "mocha --exit",
+    "lint": "eslint . --ext .ts"
+  }
+}

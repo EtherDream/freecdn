@@ -1,0 +1,15 @@
+* {
+  font-family: monospace;
+}
+
+button {
+  margin: 10px 0;
+}
+
+video {
+  width: 50%;
+}
+
+img {
+  width: 50%;
+}

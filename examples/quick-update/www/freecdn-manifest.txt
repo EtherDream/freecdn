@@ -1,0 +1,7 @@
+/logo.png
+	https://ajax.cdnjs.com/ajax/libs/browser-logos/45.0.0/chrome/chrome.png
+	https://cdnjs.cloudflare.com/ajax/libs/browser-logos/45.0.0/chrome/chrome.png
+	https://cdn.staticfile.org/browser-logos/45.0.0/chrome/chrome.png
+	https://lib.baomitu.com/browser-logos/45.0.0/chrome/chrome.png
+	https://cdnjs.loli.net/ajax/libs/browser-logos/45.0.0/chrome/chrome.png
+	hash=dBAHSGuqpb1CQ2m4iR5mpBYUXTv6FRVUi/K4tRlHYPk=
