@@ -1,9 +1,8 @@
-// @ts-ignore
 import {webcrypto} from 'crypto'
 import * as storage from './storage'
 import * as util from './util'
 
-
+// @ts-ignore
 const subtle: SubtleCrypto = webcrypto.subtle
 
 let mPublicKeyBuf: Buffer

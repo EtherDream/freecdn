@@ -1,3 +1,5 @@
+IFS=$'\n'
+
 if [[ "$NPM_PKG" == "" ]]; then
   echo "\$NPM_PKG is not specified"
   exit
