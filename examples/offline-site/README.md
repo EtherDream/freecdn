@@ -86,7 +86,7 @@ freecdn manifest --sign
 
 如果当前站点发生故障，程序可从备用站点获取最新的清单。
 
-注意，既然是最新的清单，文件内容显然是会变化的，但 URL 是固定的，因此不推荐使用 jsdelivr、unpkg 这类无法 PURGE 缓存的 CDN。
+注意，既然是最新的清单，文件内容显然是会变化的，但 URL 是固定的，因此内容更新后需清理 CDN 缓存（例如 jsdelivr 可通过 `purge.jsdelivr.net` 清理）
 
 ## 备用站点
 
