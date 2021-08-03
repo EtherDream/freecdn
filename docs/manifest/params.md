@@ -372,7 +372,9 @@ process.stdin.on('data', chunk => {
 mime=MIME | auto
 ```
 
-如果为 `auto`，程序将根据原文件的扩展名从内置列表中查找。如果找不到，默认为 `application/octet-stream`。
+如果为 `auto`，程序将根据原文件的扩展名，从内置列表中查找。如果找不到，则使用原始响应头的 MIME。
+
+> 为什么不直接使用原始响应头的 MIME？因为它可能是错的。例如 jsdelivr、unpkg 站点会将网页文件的 MIME 设置成 text/plain。因此原始响应头的 MIME 并不可信。
 
 ## 演示
 
@@ -387,28 +389,7 @@ mime=MIME | auto
 
 ## 应用场景
 
-由于备用 URL 的 MIME 可能和原文件的 MIME 不一致（例如 jsdelivr、unpkg.com 会将网页文件的 MIME 设置成 text/plain 而不是 text/html；例如将 CSS 文件附在 GIF 末尾上传到相册，使用时得到的 MIME 是 image/gif 而不是 text/css），因此程序不会使用服务器返回的 MIME，而必须通过 `mime` 参数指定。
-
-考虑到该参数极其常用，我们为清单中所有文件都预设了 `mime=auto`，因此通常你无需设置该参数。除非你的网站存在内置列表中不存在的扩展名（或无扩展名）的文件，但希望返回特定类型，此时需自己指定 MIME。例如：
-
-```bash
-/no-ext-1
-	https://cdn.jsdelivr.net/gh/zjcqoo/files/helloworld.txt
-	https://raw.githubusercontent.com/zjcqoo/files/master/helloworld.txt
-	mime=text/plain
-```
-
-访问 https://freecdn.etherdream.com/no-ext-1 可见 `HelloWorld`。虽然原文件无扩展名，但指定了 MIME，所以能正常显示。
-
-如果未指定 MIME：
-
-```bash
-/no-ext-2
-	https://cdn.jsdelivr.net/gh/zjcqoo/files/helloworld.txt
-	https://raw.githubusercontent.com/zjcqoo/files/master/helloworld.txt
-```
-
-访问 https://freecdn.etherdream.com/no-ext-2 会弹出文件对话框。因为原文件无扩展名，并且未指定 MIME，所以使用 `application/octet-stream` 类型，浏览器的默认行为是下载保存。
+考虑到该参数极其常用，我们为清单中所有文件都预设了 `mime=auto`，因此通常你无需设置该参数。除非你想修改默认类型（例如上述演示），此时需设置 MIME 参数。
 
 
 # charset
@@ -454,7 +435,7 @@ charset=CHARSET | off
 
 # headers
 
-设置响应头。程序默认会丢弃服务端返回的所有响应头。如需保留或添加，可通过该参数设置。
+设置响应头。程序默认会丢弃服务端返回的响应头。如需保留或添加，可通过该参数设置。
 
 ## 格式
 
@@ -462,7 +443,9 @@ charset=CHARSET | off
 headers={"key1": "val1", "key2": "val2", ...}
 ```
 
-如果 value 为空，则使用服务端返回的值。如果使用了多个备用 URL，选择最先返回的那个。
+如果 value 为空，则使用服务端返回的值。如果 value 为空且 key 为 `*`，则保留所有服务端的头。
+
+如果加载过程使用了多个备用 URL，选择最先返回的响应头。
 
 无法设置系统相关的头，例如 `Set-Cookie`、`Content-Encoding` 等。
 
@@ -494,7 +477,7 @@ headers={"key1": "val1", "key2": "val2", ...}
 req_headers={"key1": "val1", "key2": "val2", ...}
 ```
 
-如果 value 为空，则使用上层业务设置的值。
+如果 value 为空，则使用上层业务设置的值。如果 value 为空且 key 为 `*`，则保留所有上层业务的头。
 
 无法设置系统相关的头，例如 `Cookie`、`Accept-Encoding` 等。
 
@@ -503,12 +486,12 @@ req_headers={"key1": "val1", "key2": "val2", ...}
 ```bash
 /echo-req-headers.txt
 	https://www.etherdream.com/echo_headers
-	req_headers={"x-client-id": "", "x-requested-with": "freecdn"}
+	req_headers={"x-requested-with": "freecdn", "x-client-id": ""}
 ```
 
-访问 https://freecdn.etherdream.com/echo-req-headers.txt 可回显所有请求头，其中存在 `x-requested-with: freecdn`。
+访问 https://freecdn.etherdream.com/echo-req-headers.txt 可回显所有请求头，其中存在 `x-requested-with: freecdn`。打开控制台网络栏，可见访问备用 URL 时附加了该请求头。
 
-打开控制台，我们通过脚本发起请求，添加自定义请求头：
+在控制台中通过脚本发起请求，添加自定义头：
 
 ```js
 const res = await fetch('/echo-req-headers.txt', {
@@ -698,19 +681,51 @@ recv_timeout=N/T
 
 相比 kB/s、MB/s 等单位每秒统计一次，这里可使用更长的统计时间，降低网络抖动的影响。
 
-## 演示
 
-每 5s 至少要收到 20kB 数据，否则开启下一个 URL。
+# stream
 
-```bash
-/recv-timeout.txt
-	https://www.etherdream.com/write?data=a&bps=2000
-	https://www.etherdream.com/write?data=b&bps=5000
-	https://www.etherdream.com/write?data=c&bps=1000
-	recv_timeout=20kB/5s
+开启或禁用流模式。程序默认开启流模式，收到数据立即输出。如果禁用流模式，数据先缓存到队列，最后一次性输出。
+
+## 格式
+
+```
+stream=on | off
 ```
 
-访问 https://xxx/recv-timeout.txt 等待几秒后，。因为第一个备用 URL 限速 1kB/s，所以 5s 最多只能收到 10kB 数据，不符合条件，从而开启下一个 URL。第二个限速 5kB/s，5s 能接受 25kB 数据，符合条件。（该演示可能会受实际网络影响，不一定准确）
+如果为 `on` 则保持默认行为，忽略此模块。
+
+## 演示
+
+```bash
+/stream-on
+	https://freecdn.etherdream.com/stream.html?num=5
+
+/stream-off
+	https://freecdn.etherdream.com/stream.html?num=5
+	stream=off
+```
+
+访问 https://freecdn.etherdream.com/stream-on 可边加载边显示。
+
+访问 https://freecdn.etherdream.com/stream-off 需等待数秒，最后一次性显示所有内容。
+
+## 应用场景
+
+如果文件使用了多个备用 URL 但未设置 Hash 参数，此时需考虑各个 URL 的返回内容是否一致。如果不一致，那么在多个 URL 切换时可能会出现内容错乱的情况。此时需禁用流模式，让每个 URL 各自下载，然后再选择最先完成的 URL。
+
+目录代理、接口代理等返回内容不固定的场合，推荐使用该参数。
+
+```bash
+/api/
+	https://foo/api/
+	https://bar/api/
+	...
+	stream=off
+```
+
+## 备注
+
+Hash 参数也有禁用数据流的效果，因此设置 Hash 后不必再使用该参数。
 
 
 # 参数顺序
@@ -733,6 +748,7 @@ br
 prefix
 suffix
 hash
+stream
 ```
 
 例如 hash 校验的是最终呈现的数据，而不是裁剪、拼接、解压前的数据。
