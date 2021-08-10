@@ -59,6 +59,8 @@ freecdn 使用独特的更新机制，只需更新一个清单文件，就能更
 
 * [WebP 自动适配](examples/webp-upgrade/)
 
+* [POST 请求代理](examples/post-proxy/)
+
 # 常用文档
 
 * [命令行工具](docs/cli)
