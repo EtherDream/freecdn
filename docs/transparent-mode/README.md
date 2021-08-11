@@ -32,7 +32,7 @@ freecdn 普通接入方式，是在每个页面头部插入一个脚本：
 更好的是，**首次访问非 HTML 类型的资源也能加速**。例如 https://freecdn.etherdream.com/bigpic-progress.jpg ，如果没有透明模式，这个图片只能从原站点加载；使用透明模式后，原站点仅返回一个安装页，图片最终从免费 CDN 加载，并且界面风格和直接访问图片完全一样。（新建一个隐身窗口，打开控制台，切换到网络栏，勾选保留日志，粘贴该 URL 进行访问，即可观察细节）
 
 
-## 接入
+# 接入
 
 目前仅提供 [nginx 配置](../../examples/nginx)，其他服务可参考配置，实现等价的逻辑。
 
@@ -46,20 +46,3 @@ freecdn 普通接入方式，是在每个页面头部插入一个脚本：
 我们只在用户访问顶层页面（请求头 `sec-fetch-dest` = `document`）时才返回安装页，其他通过 `<img>`、`<iframe>`、`fetch()` 等方式加载的资源，仍返回原始内容。
 
 > Service Worker 产生的请求 `sec-fetch-dest` = `empty`，所以后端不会返回安装页，不会出现循环安装的现象。
-
-
-# 所有条件
-
-请求满足以下任何一个条件，服务端返回原始内容，都不满足才返回安装页。
-
-* `http_sec_fetch_dest` != `document` （非顶层页面的资源）
-
-* `http_pragma` = `no-cache` （强制刷新时 Service Worker 会失效）
-
-* `method` != `GET`
-
-* `request_uri` ~ `^/freecdn-|freecdn__=0` （内部路径，或不支持 Cookie）
-
-* `http_referer` ~ `freecdn__=0` （不支持 Cookie）
-
-* `cookie_freecdn` = `0` （Service Worker 无法开启）
