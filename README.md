@@ -1,5 +1,6 @@
+# freecdn
 
-# 项目简介
+[![npm version](https://img.shields.io/npm/v/freecdn.svg?style=flat)](https://www.npmjs.com/package/freecdn)
 
 freecdn 是一个纯前端的 CDN 解决方案，用于降低网站流量成本，同时提高网站稳定性、安全性，并且无需修改现有的业务逻辑。
 
