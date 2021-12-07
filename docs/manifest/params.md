@@ -760,4 +760,5 @@ stream
 expires=30s
 mime=auto
 open_timeout=10s
+valid_status=200
 ```
