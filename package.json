@@ -1,6 +1,6 @@
 {
   "name": "freecdn",
-  "version": "0.0.17",
+  "version": "0.0.20",
   "author": "EtherDream",
   "license": "MIT",
   "description": "A tool that can reduce website bandwidth costs",
@@ -31,24 +31,24 @@
   ],
   "dependencies": {
     "colors": "^1.4.0",
-    "commander": "^8.0.0",
     "freecdn-js": "^0.1.2",
-    "freecdn-publib": "^0.0.8",
+    "commander": "^8.3.0",
+    "freecdn-publib": "^0.0.10",
     "glob": "^7.1.7",
     "node-fetch": "^2.6.1",
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {
-    "@types/glob": "^7.1.4",
-    "@types/node": "^16.4.10",
+    "@types/glob": "^7.2.0",
+    "@types/node": "^16.11.11",
     "@types/node-fetch": "^2.5.12",
     "@types/sqlite3": "^3.1.7",
-    "@typescript-eslint/eslint-plugin": "^4.28.5",
-    "@typescript-eslint/parser": "^4.28.5",
+    "@typescript-eslint/eslint-plugin": "^5.6.0",
+    "@typescript-eslint/parser": "^5.6.0",
     "chai": "^4.3.4",
     "express": "^4.17.1",
-    "mocha": "^9.0.3",
-    "typescript": "^4.3.5"
+    "mocha": "^9.1.3",
+    "typescript": "^4.5.2"
   },
   "scripts": {
     "dev": "tsc -w",
