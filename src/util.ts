@@ -10,7 +10,7 @@ export const ver = require('../package.json').version
 export function readFile(file: string, silent = false) {
   try {
     return fs.readFileSync(file, 'utf8')
-  } catch (err) {
+  } catch (err: any) {
     silent || console.error(err.message)
     return null
   }
@@ -20,7 +20,7 @@ export function writeFile(path: string, data: string | Buffer) {
   try {
     fs.writeFileSync(path, data)
     return true
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message)
     return false
   }
@@ -39,7 +39,7 @@ export function mkdir(path: string) {
   try {
     fs.mkdirSync(path, {recursive: true})
     return true
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message)
     return false
   }
@@ -48,7 +48,7 @@ export function mkdir(path: string) {
 export function statFile(path: string) {
   try {
     return fs.statSync(path)
-  } catch (err) {
+  } catch (err: any) {
   }
 }
 
@@ -56,7 +56,7 @@ export function copyFile(src: string, dst: string) {
   try {
     fs.copyFileSync(src, dst)
     return true
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message)
     return false
   }
@@ -66,7 +66,7 @@ export function linkFile(src: string, dst: string) {
   try {
     fs.linkSync(src, dst)
     return true
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message)
     return false
   }
@@ -127,7 +127,7 @@ export async function request(...args: Parameters<typeof fetch>) {
   }
   try {
     return await fetch(url, opt)
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message)
   }
 }

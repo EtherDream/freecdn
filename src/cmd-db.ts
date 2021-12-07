@@ -169,7 +169,7 @@ async function sqlOption(sql: string) {
     if (result.length > 0) {
       console.table(result)
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message)
   }
 }

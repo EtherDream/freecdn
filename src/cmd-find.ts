@@ -176,7 +176,7 @@ async function getLocalFileInfo(path: string) {
 
 async function getRemoteFileInfo(url: string) {
   const res = await util.request(url)
-  if (!res) {
+  if (!res || !res.body) {
     return
   }
   const ext = util.getFileExt(url)
@@ -230,7 +230,7 @@ async function loadFiles(filter: string) {
     filePaths = glob.sync(filter, {
       nodir: true,
     })
-  } catch (err) {
+  } catch (err: any) {
     log(err.message)
     return
   }

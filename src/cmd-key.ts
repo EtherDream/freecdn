@@ -50,8 +50,8 @@ async function genKey() {
     namedCurve: 'P-256'
   }, true, [])
 
-  const publicKeyBuf = await subtle.exportKey('spki', pair.publicKey)
-  const privateKeyBuf = await subtle.exportKey('pkcs8', pair.privateKey)
+  const publicKeyBuf = await subtle.exportKey('spki', pair.publicKey as CryptoKey)
+  const privateKeyBuf = await subtle.exportKey('pkcs8', pair.privateKey as CryptoKey)
   mPublicKeyBuf = Buffer.from(publicKeyBuf)
   mPrivateKeyBuf = Buffer.from(privateKeyBuf)
   saveKey()

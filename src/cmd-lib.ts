@@ -5,7 +5,7 @@ import * as util from './util'
 function listOption() {
   try {
     freecdnPubLib.dump()
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message)
   }
 }
@@ -38,7 +38,7 @@ async function queryOption(hashes: string) {
 export function findHashes(hashBins: Buffer[]) {
   try {
     return freecdnPubLib.findHashes(hashBins)
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message)
   }
 }
