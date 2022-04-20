@@ -392,6 +392,40 @@ mime=MIME | auto
 考虑到该参数极其常用，我们为清单中所有文件都预设了 `mime=auto`，因此通常你无需设置该参数。除非你想修改默认类型（例如上述演示），此时需设置 MIME 参数。
 
 
+# valid_status
+
+设置有效的状态码。如果返回的状态码不符合，则尝试下一个 URL。
+
+## 格式
+
+```
+valid_status=code1,code2,... | *
+```
+
+可设置多个状态码，使用 `,` 分隔。如果为 `*` 则允许所有状态码。
+
+程序默认为所有文件设置了 `valid_status=200`。
+
+## 演示
+
+```bash
+/keep-status-on
+	https://freecdn.etherdream.com/status-500
+	valid_status=*
+
+/keep-status-off
+	https://freecdn.etherdream.com/status-500
+```
+
+访问 https://freecdn.etherdream.com/keep-status-on 显示 `status: 500`，说明程序接受 500 状态码。
+
+访问 https://freecdn.etherdream.com/keep-status-off 显示错误页。因为程序默认只接受 200 状态码，所以不认可 `/status-500` 的返回结果，继续访问 `/keep-status-off`。由于该文件并不存在，因此显示 404 错误页。
+
+## 应用场景
+
+对于静态资源 URL，通常无需设置该参数。如果代理的是接口 URL，有时希望保留原始状态码，可用该参数实现。
+
+
 # charset
 
 指定资源字集，追加在 `content-type` 响应头。
@@ -692,8 +726,6 @@ recv_timeout=N/T
 stream=on | off
 ```
 
-如果为 `on` 则保持默认行为，忽略此模块。
-
 ## 演示
 
 ```bash
@@ -728,28 +760,9 @@ stream=on | off
 Hash 参数也有禁用数据流的效果，因此设置 Hash 后不必再使用该参数。
 
 
-# 参数顺序
+# 参数优先级
 
-参数应用不使用清单中的定义顺序，而是内置的先后顺序：
-
-```
-open_timeout
-recv_timeout
-referrer_policy
-referrer
-req_headers
-expires
-mime
-headers
-pos
-size
-xor
-br
-prefix
-suffix
-hash
-stream
-```
+参数并不以清单中的顺序生效，而是按 [内置的优先级](https://github.com/EtherDream/freecdn-js/blob/master/core-lib/src/url-conf.ts)。
 
 例如 hash 校验的是最终呈现的数据，而不是裁剪、拼接、解压前的数据。
 

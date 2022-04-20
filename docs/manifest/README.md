@@ -1,11 +1,6 @@
-# 清单
+# 清单格式
 
-清单（manifest）用于定义 URL 的映射关系，以及相应的配置参数。
-
-清单存放在当前站点根目录，文件名为 `freecdn-manifest.txt`。
-
-
-# 案例
+清单用于定义 `原文件` 与 `备用 URL` 的映射，以及相应的配置参数。例如：
 
 ```bash
 # example
@@ -16,99 +11,148 @@
 	hash=hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=
 ```
 
+空行会被忽略。缩进使用一个或多个空白符。
 
-# 格式
-
-```bash
-# comment
-file1
-	backup_url_1
-	backup_url_2
-	...
-	param1=value1
-	param2=value2
-	...
-
-file2
-	# comment
-	...
-
-@config
-	param1=value1
-	...
-	# comment
-```
+绝对路径的 URL 以 `https://` 开头（本地测试时可使用 `http://`），相对路径以 `/` 开头。
 
 ## 原文件
 
-`https://`、`http://`、`/` 开头，用于定义原文件。`/` 开头表示当前站点的文件。
+用于定义需代理的文件，例如上述清单中 `/assets/jquery.js`。
 
-URL 禁止包含参数部分。实际应用时，访问 `/foo?v=1` 和 `/foo?v=2` 都对应 `/foo` 文件。
-
-如果出现同样的文件名，后出现的将会覆盖已存在的。
+原文件可以是绝对路径 URL，用于覆盖业务中的第三方资源。
 
 ## 备用 URL
 
-缩进开头（一个或多个空白符）。
+用于定义代理的目标。缩进开头。
 
-备用 URL 以 `https://`、`http://`、`/` 开头，数量不限。目前不支持递归到清单中其他文件。
+备用 URL 可以是相对路径，但目前不支持递归到清单中其他原文件。
 
-如果备用 URL 和当前站点不同源，则必须支持 CORS，否则该 URL 无法使用。
+原文件的 URL 会自动添加到备用 URL 中，作为后备资源。
 
-实际运行时，程序未必按清单中的顺序尝试备用 URL。顺序会受站点权重等动态因素影响。
+实际运行时，程序未必按清单中的顺序尝试备用 URL，顺序会受站点权重等因素影响。
+
+注意备用 URL 是否支持 CORS，并非所有免费 CDN 都可使用。
+
 
 ## 参数
 
-缩进开头。使用 key=value 的格式，对当前文件所有备用 URL 生效。
-
-如果只想对某个 URL 生效，可将参数定义在该 URL 的片段部分，例如：
+用于定义资源解码时的操作。缩进开头。使用 key=value 格式。例如：
 
 ```text
-file1
-	https://site1/
-	https://site2/#k2=v2
-	https://site3/#k2=v2&k1=v3
-	...
-	k1=v1
+/foo.js
+	https://img.foo.com/xx.png
+	https://img.bar.com/yy.png
+	pos=1000
+	xor=123
 ```
 
-第一个 URL 只有 k1=v1 参数，第二个 URL 有 k1=v1、k2=v2 参数，第三个 URL 有 k1=v3、k2=v2 参数。
+对于这两个备用 URL，程序都会跳过前 1000 字节数据，并对内容进行 xor 计算。
+
+完整参数可参考 [params.md](params.md)。
+
+如果只想对某个 URL 设置参数，可将参数定义在 URL 的片段部分。例如：
+
+```text
+/foo.js
+	https://img.foo.com/xx.png#pos=1000&xor=123
+	https://mycdn.com/foo.js
+```
 
 URL 片段中的参数具有最高优先级，可覆盖外部定义的参数。
 
-完整的参数可参考 [params.md](params.md)。
+## 文件标记
 
-URL 行和参数行可以都为空，这种情况仅用于标记文件存在，例如 [图片渐进](../img-upgrade) 的场合。
+原文件可以没有备用 URL 和参数，例如：
+
+```text
+/assets/img.jpg
+
+/assets/img.jpg.webp
+
+/assets/img.jpg.avif
+```
+
+这种情况仅用于标记文件存在，例如 [图片渐进](../img-upgrade) 的场合会用到。
+
+## 原文件的 URL Query
+
+原文件的 URL 无需携带 Query。程序查询清单时，会忽略 URL 请求中的 Query。例如：
+
+```text
+/foo.js
+	...
+```
+
+无论请求 `/foo.js?v=1` 还是 `/foo.js?v=2`，都会命中 `/foo.js` 文件。
+
+如果原文件 URL 存在 Query，那么 URL 必须完全相等才会命中。例如：
+
+```text
+/getfile.php?name=bar.js
+	...
+```
+
+只有请求 `/getfile.php?name=bar.js` 才会命中。
+
 
 ## 目录匹配
 
-`/` 结尾的文件名可匹配目录，该文件的备用 URL 也必须以 `/` 结尾，运行时程序会加上后缀部分。例如：
+原文件以 `/` 结尾可匹配目录。备用 URL 也必须以 `/` 结尾，代理时会加上原文件的后缀部分。例如：
 
 ```
 /api/
 	https://api.mysite.com/
 ```
 
-访问 `/api/pato/to?a=1` 会请求 `https://api.mysite.com/path/to?a=1`。
+访问 `/api/path/to?a=1` 代理到 `https://api.mysite.com/path/to?a=1`。
 
-目录匹配可用于全站代理，而不必预先设置每个文件的备用 URL。
+目录匹配可实现批量代理，而不必预先配置每个文件的备用 URL，更简单更灵活。但不可设置 hash 参数，安全性略低。
 
-## config
+代理时会保留 method、body 数据，但请求头需通过 [req_headers](params.md#req_headers) 参数保留，响应头需通过 [headers](params.md#headers) 保留，状态码需通过 [valid_status](params.md#valid_status) 保留。备用 URL 推荐使用子域名，从而能通过根域 cookie 携带登录态。
 
-`@` 开头，用于定义配置。
+注意，一次请求可能会访问多个备用 URL。因此对于动态接口，后端必须有防重放机制。同时设置 [stream=off](params.md#stream) 禁用流模式，防止每个 URL 内容不一致，导致内容错乱。
 
-如果出现同样的配置名，后出现的将会覆盖已存在的。
 
-## ignore
+## 配置
 
-空行，或 `#` 注释行。
+配置以 `@` 开头，用于定义一些参数。参考下文。
 
+## 覆盖
+
+如果出现同样的文件名、配置名，后出现的将会覆盖已存在的。这个机制在清单外链时会用到。
+
+# 权重配置
+
+使用 `@weight` 可配置站点的初始权重值，数字越大优先级最高。例如：
+
+```text
+@weight
+	cdnjs.cloudflare.com=100
+	cdn.jsdelivr.net=60
+```
+
+程序会优先使用 cdnjs 站点的备用 URL。
+
+在 `@weight ` 后面添加地区信息，可为不同地区的用户使用不同的权重：
+
+```text
+@weight zh-cn
+	lib.baomitu.com=100
+	cdn.jsdelivr.net=50
+	ajax.googleapis.com=0
+```
+
+这样可根据实际情况，为不同地区的用户分配更合理的站点。
+
+地区信息目前使用 `navigator.language` 属性，小写值。
+
+地区中有 `-` 的时候，例如 `en-us`，程序会优先使用 `@weight en-us`；没有则尝试 `@weight en`，最后尝试 `@weight`。如果都没有，则使用程序内置的 [默认权重](https://github.com/EtherDream/freecdn-js/blob/master/core-lib/src/zone-host.ts)。
 
 # 站点参数
 
 使用 `@host` 可配置备用站点的公共参数。例如：
 
-```bash
+```text
 /file1
 	https://foo.com/file1#k1=v1
 	https://bar.com/file1
@@ -122,7 +166,7 @@ URL 行和参数行可以都为空，这种情况仅用于标记文件存在，�
 	https://bar.com/file3
 ```
 
-这里每个 `foo.com` 的 URL 都有 `k1=v1` 配置，显然很累赘。这时可用 `@host` 进行简化：
+这里每个 `foo.com` 的 URL 都有 `k1=v1` 配置，显然很累赘。这时可用 `@host` 统一配置：
 
 ```bash
 @host foo.com
@@ -141,7 +185,7 @@ URL 行和参数行可以都为空，这种情况仅用于标记文件存在，�
 	https://bar.com/file3
 ```
 
-这样任何文件使用 `foo.com` 站点时，默认带有 `k1=v1` 配置。
+这样 `foo.com` 站点的备用 URL 默认带有 `k1=v1` 配置。
 
 ## 常用案例
 
@@ -149,6 +193,10 @@ URL 行和参数行可以都为空，这种情况仅用于标记文件存在，�
 # 访问自己 CDN 时携带完整 referrer，便于分析
 @host cdn.mysite.com
 	referrer_policy=unsafe-url
+
+# 访问图床站点时，自动跳过前 1000 字节的图片外壳
+@host i.imgur.com
+	pos=1000
 ```
 
 
@@ -161,11 +209,11 @@ URL 行和参数行可以都为空，这种情况仅用于标记文件存在，�
 	open_timeout=2s
 ```
 
-所有文件都会继承该参数。
+所有备用 URL 都会继承该参数。
 
-## 优先级
+# 参数优先级
 
-各类参数的优先级（从低到高）：
+总结下各类参数的优先级（从低到高）：
 
 [系统预设参数](params.md#系统预设参数) < 全局参数 < 站点参数 < 文件参数 < URL 片段参数
 
@@ -186,9 +234,9 @@ freecdn 会依次加载它们，扩充到当前清单结尾。
 
 > 目前不支持多层嵌套，即外部清单不支持 `@include`。
 
-**清单 URL 可以是当前清单中的文件**，因此可实现冗余处理、完整性校验等操作。例如：
+**清单 URL 可以是当前清单中的原文件**，例如：
 
-```bash
+```text
 /manifest-full
 	https://site-1/manifest-v1
 	https://site-2/manifest-v1
@@ -199,9 +247,7 @@ freecdn 会依次加载它们，扩充到当前清单结尾。
 	/manifest-full
 ```
 
-程序将从 site-1、site-2、img-host 加载完整清单，如果都失败，最后尝试当前站点 `/manifest-full` 文件，从而提高稳定性。
-
-配合 Hash 参数，还可防止外部清单被篡改，从而提高安全性。
+程序将从 site-1、site-2、img-host 加载完整清单，如果都失败，最后尝试当前站点 `/manifest-full` 文件，从而提高稳定性。配合 Hash 参数，还可防止外部清单被篡改，从而提高安全性。
 
 有了这个机制，无论资源数量有多少，你站点下的清单只需存储几个 URL 和 Hash，通常只有几百字节，进一步降低流量开销。
 
@@ -229,7 +275,7 @@ freecdn 会依次加载它们，扩充到当前清单结尾。
 
 当补丁文件变得较大时，再重新生成完整清单，清空补丁文件。
 
-对于存在大量文件并且更新频繁的站点，使用该方案可节省不少流量。
+对于存在大量文件并且更新频繁的站点，使用该方案可节省不少流量。当然，如果 CDN 流量是免费的话，就没必要这么麻烦了。
 
 
 # 更新参数
@@ -290,4 +336,4 @@ freecdn 使用 WebSocket 和更新服务器保持长连接，当服务器检测�
 
 公钥硬编码在 loader-js 中，防止被恶意脚本篡改。通过 `freecdn js --make` 创建的脚本已自动填入公钥。
 
-私钥由开发者保管，可通过 `freecdn key --list` 查看。
+私钥由开发者保管，可通过 `freecdn key` 查看。
