@@ -261,8 +261,7 @@ async function loadUrls(file: string) {
   const urls = util.splitList(text)
   log('check', urls.length, 'urls ...')
 
-  for (let url of urls) {
-    url = util.stripUrlQuery(url)
+  for (const url of urls) {
     const fileInfo = await getRemoteFileInfo(url)
     if (!fileInfo) {
       log('failed to read', url.red)
