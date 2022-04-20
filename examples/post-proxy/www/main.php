@@ -46,7 +46,7 @@
     }
     return [
       'time' => date('Y-m-d h:i:s'),
-      'data' => htmlspecialchars($data),
+      'data' => $data,
       'nonce' => $nonce,
     ];
   }
@@ -73,7 +73,7 @@
     }
 
     foreach ($records as $item) {
-      $data = $item['data'];
+      $data = htmlspecialchars($item['data']);
       $time = $item['time'];
       echo("
     <tr>

@@ -1,7 +1,7 @@
-ZLIB_VER=1.2.11
+ZLIB_VER=1.2.12
 PCRE_VER=8.45
-OPENSSL_VER=1.1.1l
-OPENRESTY_VER=1.19.9.1
+OPENSSL_VER=1.1.1n
+OPENRESTY_VER=1.21.4.1rc3
 
 tmp=$(mktemp -d)
 echo $tmp
@@ -10,7 +10,7 @@ cd $tmp
 git clone https://github.com/google/ngx_brotli.git --recurse-submodules
 
 curl -O https://zlib.net/zlib-$ZLIB_VER.tar.gz
-curl -O https://ftp.pcre.org/pub/pcre/pcre-$PCRE_VER.tar.gz
+curl -OL https://versaweb.dl.sourceforge.net/project/pcre/pcre/$PCRE_VER/pcre-$PCRE_VER.tar.gz
 curl -O https://www.openssl.org/source/openssl-$OPENSSL_VER.tar.gz
 curl -O https://openresty.org/download/openresty-$OPENRESTY_VER.tar.gz
 
