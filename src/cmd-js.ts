@@ -26,7 +26,7 @@ function makeInternalFiles(dev: boolean) {
   for (const file of list) {
     const pos = file.lastIndexOf('/')
     if (pos !== -1) {
-      const dir = dstDir + file.substr(0, pos)
+      const dir = dstDir + file.substring(0, pos)
       if (!util.mkdir(dir)) {
         return
       }

@@ -184,7 +184,7 @@ export function stripUrlQuery(url: string) {
   if (pos === -1) {
     return url
   }
-  return url.substr(0, pos)
+  return url.substring(0, pos)
 }
 
 export function getFileExt(url: string) {
@@ -192,7 +192,7 @@ export function getFileExt(url: string) {
   if (pos === -1) {
     return ''
   }
-  return url.substr(pos + 1)
+  return url.substring(pos + 1)
 }
 
 export function getPair(
@@ -205,8 +205,8 @@ export function getPair(
     return [str, null]
   }
   return [
-    str.substr(0, pos),
-    str.substr(pos + char.length)
+    str.substring(0, pos),
+    str.substring(pos + char.length)
   ]
 }
 
