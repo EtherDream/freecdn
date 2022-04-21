@@ -6,7 +6,7 @@ freecdn 是一个纯前端的 CDN 解决方案，用于降低网站流量成本�
 
 # 最近更新
 
-v0.1.3
+v0.1.4
 
 * 新增 [站点权重](docs/manifest/README.md#权重配置) 配置。
 
