@@ -29,13 +29,13 @@ bit: b
 
 [单位前缀](https://en.wikipedia.org/wiki/Binary_prefix)：
 
-k: 1000
+k/K: 1000
 
 M: 1000<sup>2</sup>
 
 G: 1000<sup>3</sup>
 
-Ki: 1024
+ki/Ki: 1024
 
 Mi: 1024<sup>2</sup>
 
