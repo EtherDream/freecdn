@@ -1,6 +1,6 @@
 # WebP 升级
 
-加载图片资源时（URL 扩展名为 `jpg`, `jpeg`, `png`,`apng`, `gif`, `ico`），如果 `Accept` 请求头包含 `image/webp`，且清单中存在 `${原文件名}.webp` 文件，那么最终将会使用 WebP 版本。
+加载图片资源时（URL 扩展名为 `jpg`, `jpeg`, `png`,`apng`, `gif`, `ico`, `bmp`），如果 `Accept` 请求头包含 `image/webp`，且清单中存在 `${原文件名}.webp` 文件，那么最终将会使用 WebP 版本。
 
 例如，你可以在清单中定义一个无备用 URL 和参数的文件，仅用于标记该文件存在：
 

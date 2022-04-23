@@ -48,20 +48,20 @@ export NPM_PKG="free-host"
 freecdn find --filter manifest-full.txt --save
 ```
 
-创建引用外部清单的 [配置文件](custom.conf)：
+创建引用外部清单的配置文件 [custom.conf](custom.conf)：
 
 ```bash
 @include
 	/manifest-full.txt
 ```
 
-合并配置到当前清单：
+合并该配置到当前站点清单：
 
 ```bash
 freecdn manifest --merge ../custom.conf
 ```
 
-最终很简短，`freecdn-manifest.txt` 内容如下：
+当前站点的清单最终很简短：
 
 ```bash
 /manifest-full.txt
