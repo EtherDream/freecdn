@@ -3,6 +3,7 @@ import {ver} from './util'
 import {run as findRun} from './cmd-find'
 import {run as jsRun} from './cmd-js'
 import {run as manifestRun} from './cmd-manifest'
+import {run as packRun} from './cmd-pack'
 import {run as dbRun} from './cmd-db'
 import {run as libRun} from './cmd-lib'
 import {run as keyRun} from './cmd-key'
@@ -39,6 +40,15 @@ program
   .option('-s, --sign',             '对输入清单进行签名，保存到输出清单')
   .option('--verify-sign',          '校验输入清单的签名')
   .action(manifestRun)
+
+// program
+//   .command('pack')
+//   .description('资源打包')
+//   .option('-i, --input <path>',     '需打包的文件目录')
+//   .option('-f, --filter <glob>',    '需过滤的文件，使用 glob 匹配', '**')
+//   .option('-o, --output <file>',    '保存路径')
+//   .option('-l, --list <file>',      '显示资源包内容')
+//   .action(packRun)
 
 program
   .command('db')

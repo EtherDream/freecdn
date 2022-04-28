@@ -8,8 +8,13 @@ import fetch from 'node-fetch'
 export const ver = require('../package.json').version
 
 export function readFile(file: string, silent = false) {
+  const ret = readFileBin(file, silent)
+  return ret && ret.toString()
+}
+
+export function readFileBin(file: string, silent = false) {
   try {
-    return fs.readFileSync(file, 'utf8')
+    return fs.readFileSync(file)
   } catch (err: any) {
     silent || console.error(err.message)
     return null
