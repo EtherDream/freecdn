@@ -266,6 +266,45 @@ suffix="string" | BASE64
 演示：https://freecdn.etherdream.com/angular-append-comment.js
 
 
+# data
+
+使用内嵌的数据代替 URL 请求。
+
+## 格式
+
+```
+data="string" | BASE64
+```
+
+格式和 `prefix` 一样。
+
+## 演示
+
+```bash
+/empty.txt
+	data=""
+
+/1x1.gif
+	data=R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRA
+```
+
+访问 https://freecdn.etherdream.com/empty.txt 返回空文件。
+
+访问 https://freecdn.etherdream.com/1x1.gif 返回 1x1 像素的透明图片。
+
+## 应用场景
+
+使用该参数可将较小的文件直接内嵌在清单中，无需设置备用 URL，从而减少网络请求。
+
+通过工具生成清单时，默认会将小文件内嵌。
+
+## 备注
+
+由于内容已固定，因此无需设置 hash 参数。和请求相关的参数，例如 req_headers、timeout 等也无需设置。
+
+可修改内容的参数仍可设置，例如 prefix、xor 等，但通常没必要。
+
+
 # br
 
 解压缩 brotil 文件。
@@ -625,6 +664,8 @@ REFERRER-POLICY 的值可 [参考文档](https://developer.mozilla.org/en-US/doc
 # expires
 
 指定资源缓存时间，设置 `cache-control` 响应头。在过期时间内再次访问该资源，浏览器直接从内存缓存（`memory cache`）加载，而不会请求 Service Worker。
+
+如果原始响应头的过期时间小于该值，则使用原始过期时间，以防资源无法及时更新。
 
 ## 格式
 
