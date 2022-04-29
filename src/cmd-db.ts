@@ -10,9 +10,8 @@ const DB_FILE = 'custom.db'
 let mDatabase: sqlite.Database
 let mWildCard = false
 
-// escape sqlite wildcard (`_` and `%`)
-const WC_SRC = /[_%]/g
-const WC_ESC = '\t'
+const WC_ESC_CHAR = /[_%]/g
+const WC_ESC_MARK = '\t'
 
 type field_t = 'hash' | 'url' | 'host' | ''
 
@@ -25,16 +24,26 @@ function genSql(input: string, field: field_t) {
 
     if (mWildCard || field === 'host') {
       vals = vals.map(v => v
-        .replace(WC_SRC, `${WC_ESC}$&`)
+        // 将 SQLite 内置的通配符（`_` 和 `%`）转义成普通字符
+        .replace(WC_ESC_CHAR, `${WC_ESC_MARK}$&`)
+
+        // 将 `*` 变成通配符（本程序使用 `*` 通配）
         .replace(/\*/g, '%')
       )
+
+      // host 字段转成 `http(s)://$host/` 开头的匹配
       if (field === 'host') {
         field = 'url'
         vals = vals.map(v => `http%://${v}/%`)
       }
+
+      // 无需填入 vals 的值，之后查询时框架自动填充
       expr += vals.map(_ => `${field} LIKE ?`).join(' OR ')
-      expr += ` ESCAPE "${WC_ESC}"`
-    } else {
+
+      // 定义转义符
+      expr += ` ESCAPE "${WC_ESC_MARK}"`
+    }
+    else {
       expr += `${field} IN (` + vals.map(_ => '?') + ')'
     }
   }
@@ -107,8 +116,8 @@ async function getCount() {
 
 async function importOption() {
   const enum N {
-    ROW_PER_TIME = 10000,
-    COL = 2,
+    FLUSH_NUM = 10000,
+    COL_NUM = 2,
   }
   const c1 = await getCount()
   const reader = readline.createInterface({
@@ -118,7 +127,7 @@ async function importOption() {
   let lineId = 0
 
   async function flush() {
-    const num = vals.length / N.COL
+    const num = vals.length / N.COL_NUM
     const holder = '(?,?),'.repeat(num - 1) + '(?,?)'
     const sql = 'INSERT OR REPLACE INTO table_urls VALUES ' + holder
     await runSql(sql, vals)
@@ -147,7 +156,7 @@ async function importOption() {
       console.error('line:', lineId, 'invalid url:', url)
       continue
     }
-    if (vals.push(hash, url) > N.ROW_PER_TIME * N.COL) {
+    if (vals.push(hash, url) >= N.FLUSH_NUM * N.COL_NUM) {
       await flush()
       console.log(lineId, 'lines parsed')
     }
