@@ -32,17 +32,17 @@ freecdn 普通接入方式，是在每个页面头部插入一个脚本：
 更好的是，**首次访问非 HTML 类型的资源也能加速**。例如 https://freecdn.etherdream.com/bigpic-progress.jpg ，如果没有透明模式，这个图片只能从原站点加载；使用透明模式后，原站点仅返回一个安装页，图片最终从免费 CDN 加载，并且界面风格和直接访问图片完全一样。（新建一个隐身窗口，打开控制台，切换到网络栏，勾选保留日志，粘贴该 URL 进行访问，即可观察细节）
 
 
-# 接入
-
-目前仅提供 [nginx 配置](../../examples/nginx)，其他服务可参考配置，实现等价的逻辑。
-
-
-# 请求类型
+# 向下兼容
 
 如果访问任意路径都返回 Service Worker 安装页，那么蜘蛛、爬虫等工具无法获得真实内容。并且被外链的资源也会失效，例如其他站点通过 `<img>` 引用了你网站的图片，但是你返回的却是一个安装页，这显然有问题。
 
-因此后端需检测请求的目标类型。目前较新的浏览器支持 [Fetch Metadata](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode) 标准，每个请求会带上 `sec-fetch-*` 相关的头，用于标记该请求的用途、类型等信息。
+因此后端需检测请求的目标类型。目前主流浏览器支持 [Fetch Metadata](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode) 标准，每个请求会带上 `sec-fetch-*` 相关的头，用于标记该请求的用途、类型等信息。
 
 我们只在用户访问顶层页面（请求头 `sec-fetch-dest` = `document`）时才返回安装页，其他通过 `<img>`、`<iframe>`、`fetch()` 等方式加载的资源，仍返回原始内容。
 
 > Service Worker 产生的请求 `sec-fetch-dest` = `empty`，所以后端不会返回安装页，不会出现循环安装的现象。
+
+
+# 接入
+
+目前仅提供 [nginx 配置](../../examples/nginx)，其他服务可参考配置，实现等价的逻辑。
