@@ -253,12 +253,44 @@ describe('cmd js', () => {
     cd('js')
     $`freecdn js --make`
     expect(read('freecdn-loader.min.js'))
+      .include('https://unpkg.com/')
+      .include('https://cdn.jsdelivr.net')
+      .include('https://code.bdstatic.com/')
       .include(pk)
 
     freecdnJs.buildFiles.forEach(file => {
       expect(read(`freecdn-internal/${jsver}/${file}`))
         .eq(read(`../../node_modules/freecdn-js/dist/${file}`))
     })
+  })
+
+  it('cdn partial', () => {
+    cd('js')
+    $`freecdn js --make --cdn "unpkg jsdelivr"`
+    expect(read('freecdn-loader.min.js'))
+      .include('https://unpkg.com/')
+      .include('https://cdn.jsdelivr.net')
+      .not.include('https://code.bdstatic.com/')
+  })
+
+  it('cdn custom url', () => {
+    cd('js')
+    $`freecdn js --make --cdn "https://foo https://bar unpkg"`
+    expect(read('freecdn-loader.min.js'))
+      .include('https://foo')
+      .include('https://bar')
+      .include('https://unpkg.com/')
+      .not.include('https://cdn.jsdelivr.net/')
+  })
+
+  it('cdn none', () => {
+    cd('js')
+    $`freecdn js --make --cdn none`
+    expect(read('freecdn-loader.min.js'))
+      .include('0,"freecdn-internal/')    // setTimeut(?,0,"..."
+      .not.include('https://unpkg.com/')
+      .not.include('https://cdn.jsdelivr.net')
+      .not.include('https://code.bdstatic.com/')
   })
 
   it('setup sw', () => {

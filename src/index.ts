@@ -27,8 +27,12 @@ program
   .command('js')
   .description('维护前端文件')
   .option('-m, --make',             '创建前端资源')
+  .option('--cdn <urls>',           '指定主脚本从哪些 URL 加载，使用空白符分隔\n' +
+                                    '内置值：jsdelivr, unpkg, bdstatic, elemecdn\n' +
+                                    '默认使用所有内置 CDN。参数为 none 则不使用外部 URL')
   .option('--setup-sw <file>',      '共享接入模式。插入代码到已有的 Service Worker 文件')
   .option('--dev',                  '开发模式。前端文件使用调试版本')
+  .option('-v, --version',          '查看 JS 版本')
   .action(jsRun)
 
 program
@@ -56,15 +60,18 @@ program
   .option('-l, --list',             '查看所有记录')
   .option('--list-host <hosts>',    '查看指定站点的记录。多个值使用空白符分隔，下同')
   .option('--list-hash <hashes>',   '查看指定 Hash 的记录\n')
-  .option('--list-url <urls>',      '查看指定 URL 的记录\n')
+  .option('--list-url <urls>',      '查看指定 URL 的记录\n' +
+                                    '----')
   .option('-c, --count',            '统计所有记录数')
   .option('--count-host <hosts>',   '统计指定站点的记录数')
   .option('--count-hash <hashes>',  '统计指定 Hash 的记录数')
-  .option('--count-url <urls>',     '统计指定 URL 的记录数')
+  .option('--count-url <urls>',     '统计指定 URL 的记录数\n' +
+                                    '----')
   .option('--del-host <hosts>',     '删除指定站点的记录')
   .option('--del-hash <hashes>',    '删除指定 Hash 的记录')
   .option('--del-url <urls>',       '删除指定 URL 的记录')
-  .option('--del-all',              '删除所有记录')
+  .option('--del-all',              '删除所有记录\n' +
+                                    '----')
   .option('-w, --wildcard',         '开启通配模式，`*` 可匹配任意数量的字符。例如：\n' +
                                     'freecdn db --list-url "*.gif *.png" -w\n' +
                                     '执行 --list-host、--count-host、--del-host 时自动开启')

@@ -1,3 +1,4 @@
+import {Command} from 'commander'
 import * as freecdnJs from 'freecdn-js'
 import {getPublicKey} from './cmd-key'
 import * as util from './util'
@@ -5,6 +6,15 @@ import * as util from './util'
 
 const LOADER_DEV = 'freecdn-loader.js'
 const LOADER_MIN = 'freecdn-loader.min.js'
+
+const JS_VER = freecdnJs.ver
+
+const CDN_URL_MAP: {[k: string]: string} = {
+  bdstatic: `https://code.bdstatic.com/npm/freecdn-js@${JS_VER}/dist/freecdn-main.min.js`,
+  elemecdn: `https://npm.elemecdn.com/freecdn-js@${JS_VER}/dist/freecdn-main.min.js`,
+  unpkg: `https://unpkg.com/freecdn-js@${JS_VER}/dist/freecdn-main.min.js`,
+  jsdelivr: `https://cdn.jsdelivr.net/npm/freecdn-js@${JS_VER}/dist/freecdn-main.min.js`,
+}
 
 
 async function getPublicKeyB64() {
@@ -38,7 +48,19 @@ function makeInternalFiles(dev: boolean) {
   }
 }
 
-async function makeOption(dev: boolean) {
+async function makeOption(dev: boolean, cdn: string) {
+  const cdnUrls =
+    cdn === '' ? Object.values(CDN_URL_MAP) :
+    cdn === 'none' ? [] :
+    util.splitList(cdn).map(v => CDN_URL_MAP[v] || v)
+
+  for (const url of cdnUrls) {
+    if (!util.verifyUrl(url)) {
+      console.error('invalid url:', url)
+      return
+    }
+  }
+
   const publicKey = await getPublicKeyB64()
   const loaderSrc = freecdnJs.dir + (dev ? LOADER_DEV : LOADER_MIN)
   const loaderTxt = util.readFile(loaderSrc)
@@ -47,7 +69,11 @@ async function makeOption(dev: boolean) {
   }
   util.unlinkFile(LOADER_MIN)
 
-  const code = loaderTxt.replace(/[A-Za-z0-9/+]{86}/, `${publicKey}`)
+  const code = loaderTxt
+    .replace(/[A-Za-z0-9/+]{86}/, `${publicKey}`)
+    .replace('CDN_URLS_PLACEHOLDER', JSON.stringify(cdnUrls))
+    .replace('DELAY_PLACEHOLDER', cdnUrls.length ? '1000' : '0')
+
   if (dev) {
     if (!util.writeFile(loaderSrc, code)) {
       return
@@ -95,17 +121,18 @@ ${delim}`
 }
 
 
-export async function run(args: any) {
+export async function run(args: any, program: Command) {
   if (args.make) {
-    await makeOption(args.dev)
+    await makeOption(args.dev, args.cdn || '')
     return
   }
   if (args.setupSw) {
     await setupSwOption(args.setupSw, args.dev)
     return
   }
-
-  const {ver} = freecdnJs
-  console.log('v' + ver)
-  console.log(`see: https://github.com/EtherDream/freecdn-js/tree/${ver}`)
+  if (args.version) {
+    console.log(JS_VER)
+    return
+  }
+  program.outputHelp()
 }
