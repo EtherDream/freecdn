@@ -290,7 +290,7 @@ data="string" | BASE64
 
 访问 https://freecdn.etherdream.com/empty.txt 返回空文件。
 
-访问 https://freecdn.etherdream.com/1x1.gif 返回 1x1 像素的透明图片。
+访问 https://freecdn.etherdream.com/1x1.gif 返回 1x1 像素的图片。
 
 ## 应用场景
 

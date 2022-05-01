@@ -6,11 +6,11 @@ freecdn 是一个纯前端的 CDN 解决方案，用于降低网站流量成本�
 
 # 最近更新
 
+* 可自定义 main-js 的 URL，[查看文档](docs/cli/README.md#cdn)
+
 * 新增 [data](docs/manifest/params.md#data) 参数，小文件可直接内嵌在清单中。
 
 * 新增 [站点权重](docs/manifest/README.md#权重配置) 配置。
-
-* 更新清单文档、参数文档。
 
 * 更新公共库，新增字节跳动 CDN。
 

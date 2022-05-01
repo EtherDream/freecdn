@@ -95,10 +95,46 @@ freecdn js --make
 
 * `freecdn-internal/` 下可能存在多个版本的目录，以防极少数用户仍在使用旧的资源。你可以手动删除那些很久以前的版本目录。
 
+### cdn
+
+指定 main-js 从哪些 URL 加载，使用空白符分隔。程序内置几个 CDN 值：
+
+* unpkg
+* jsdelivr
+* bdstatic
+* elemecdn
+
+如果未设置该参数，默认使用所有内置 CDN。如果参数为 `none` 则不使用 CDN。
+
+例如只使用 unpkg 和 jsdelivr：
+
+```bash
+freecdn js --make --cdn "unpkg jsdelivr"
+```
+
+例如从自己的 CDN 加载：
+
+```bash
+freecdn js --make --cdn "https://cdn.mysite.com/1.0.0/freecdn-main.min.js"
+```
+
+注意 main-js 的版本需和 loader-js 保持一致。（JS 版本可通过 `freecdn js -v` 命令查看）
+
+例如不使用 CDN：
+
+```bash
+freecdn js --make --cdn none
+```
+
+这时直接从当前站点 `/freecdn-internal/$VER/freecdn-main.min.js` 加载。
+
+> 关于 loader-js 和 main-js 相关的技术细节，[可参考此处](https://github.com/EtherDream/freecdn-js)。
+
 ### setup-sw
 
 如果当前站点已存在 Service Worker，需使用该选项安装。参考 [共享模式](../docs/shared-mode/)。
 
+该模式下 main-js 只从当前站点加载，不使用外部 URL。
 
 ## manifest
 
