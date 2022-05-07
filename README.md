@@ -6,14 +6,7 @@ freecdn 是一个纯前端的 CDN 解决方案，用于降低网站流量成本�
 
 # 最近更新
 
-* 可自定义 main-js 的 URL，[查看文档](docs/cli/README.md#cdn)
-
-* 新增 [data](docs/manifest/params.md#data) 参数，小文件可直接内嵌在清单中。
-
-* 新增 [站点权重](docs/manifest/README.md#权重配置) 配置。
-
-* 更新公共库，新增字节跳动 CDN。
-
+新增资源包功能，可将多个小文件合并成一个资源包，运行时从中提取。[查看更多](CHANGELOG.md)
 
 # 功能亮点
 
@@ -70,6 +63,8 @@ freecdn 使用独特的更新机制，只需更新一个清单文件，就能更
 
 * [WebP 自动适配](examples/webp-upgrade/)
 
+* [📦 多个小文件合并成资源包](examples/bundle/)
+
 * [POST 请求代理](examples/post-proxy/)
 
 # 常用文档
@@ -92,13 +87,25 @@ freecdn 前端脚本依赖 Service Worker API，并使用了 ES2020 语法和特
 由于 Service Worker 只能在安全环境中开启，因此你的站点必须是 HTTPS。本地测试（127.0.0.1/localhost）时可以使用 HTTP。
 
 
-# 相关项目
+# 相关组件
 
-* [freecdn-js](https://github.com/EtherDream/freecdn-js)：前端脚本
+## 前端脚本
 
-* [freecdn-publib](https://github.com/EtherDream/freecdn-publib)：公共库查询
+freecdn-js：https://github.com/EtherDream/freecdn-js
 
-* [freecdn-update-svc](https://github.com/EtherDream/freecdn-update-svc)：更新推送服务
+页面引用的脚本体积极小，压缩后只有几百字节，最大程度减少你的网站流量。
+
+## 公共库
+
+freecdn-publib：https://github.com/EtherDream/freecdn-publib
+
+公共库收集了十几个 CDN 站点 1000 多万条 URL 记录。
+
+## 更新服务
+
+freecdn-update-svc：https://github.com/EtherDream/freecdn-update-svc
+
+使用更新推送服务，长缓存资源也能快速更新。
 
 
 # 项目进展
@@ -115,8 +122,6 @@ freecdn 前端脚本依赖 Service Worker API，并使用了 ES2020 语法和特
 * 更智能的站点选择算法（目前规则还很简单，需进一步完善）
 
 * 大文件拆分（将大文件拆分成多个小文件，使用时自动合并。从而符合免费 CDN 的上传体积限制）
-
-* 小文件合并（将多个小文件打包成一个大文件，使用自动提取。可减少零碎文件的请求数）
 
 * 纯前端日志（通过 Service Worker 采集用户访问日志，发送到开发者提供的接口。适用于 GitHub Pages 等无法查看详细日志的站点）
 
