@@ -688,6 +688,57 @@ describe('cmd lib', () => {
 })
 
 
+describe('cmd pack', () => {
+  it('basic', () => {
+    cd('pack')
+    $`freecdn pack -i assets -o assets.fcpkg`
+    expect(read('assets.fcpkg'))
+      .include(`"index.html":`)
+      .include(`"js/main.js":`)
+      .include(`"css/main.css":`)
+      .include(`"img/1.png":`)
+      .include(`"img/1.png.webp":`)
+      .include(`"img/1.png.avif":`)
+
+      .include(`<h1>Hello World</h1>`)
+      .include(`console.log('hello')`)
+      .include(`background-color:`)
+
+      .not.include(`Don't Pack Me`)
+      rm('assets.fcpkg')
+  })
+
+  it('filter', () => {
+    cd('pack')
+    $`freecdn pack -f "**/*.{js,html}" -i assets -o assets.fcpkg`
+    expect(read('assets.fcpkg'))
+      // header
+      .include(`"index.html":`)
+      .include(`"js/main.js":`)
+
+      // data
+      .include(`<h1>Hello World</h1>`)
+      .include(`console.log('hello')`)
+
+      .not.include(`"css/main.css":`)
+      .not.include(`background-color:`)
+
+      .not.include(`Don't Pack Me`)
+      rm('assets.fcpkg')
+  })
+
+  it('no-img-upgrade', () => {
+    cd('pack')
+    $`freecdn pack --no-img-upgrade -i assets -o assets.fcpkg`
+    expect(read('assets.fcpkg'))
+      .include(`"img/1.png":`)
+      .not.include(`"img/1.png.webp":`)
+      .not.include(`"img/1.png.avif":`)
+      rm('assets.fcpkg')
+  })
+})
+
+
 describe('env vars', () => {
   it('http headers', async () => {
     process.env['FREECDN_HTTP_USER_AGENT'] = CUSTOM_UA

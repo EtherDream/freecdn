@@ -27,6 +27,7 @@ npm install freecdn -g
 
 * [key](#key) 维护密钥
 
+* [pack](#pack) 打包文件
 
 ## find
 
@@ -304,6 +305,73 @@ freecdn key --update
 密钥更新后，重新生成前端脚本时，清单也需重新签名（如果之前存在签名），以保持两者一致。
 
 > 密钥存储在 `~/.freecdn/key.json`
+
+
+## pack
+
+将多个文件打包成一个资源包，运行时通过 `bundle` 参数提取。
+
+例如将 assets/icons 目录下所有文件进行打包：
+
+```bash
+freecdn pack -i assets/icons -o assets/icons.fcpkg
+```
+
+资源包推荐使用 `.fcpkg` 扩展名（freecdn package），因为程序打包时会忽略该扩展名的文件，防止重复打包。
+
+此外 `freecdn-` 开头的文件也会被忽略，避免将本程序相关的文件打包进去。
+
+### headers
+
+打包时可通过 `headers` 参数配置指定文件的 HTTP 响应头，使用 JSON 格式：
+
+```bash
+freecdn pack -i assets/icons -o assets/icons.fcpkg \
+  --headers '{"1.png": {"x-key": "hello"}, "2.png": {"x-key": "world"}}'
+```
+
+也可使用 JSON 文件：
+
+```bash
+freecdn pack -i assets/icons -o assets/icons.fcpkg \
+  --headers path/to/conf.json
+```
+
+### filter
+
+设置路径过滤，使用 glob 格式。例如只打包 JS 和 HTML 文件：
+
+```bash
+freecdn pack -i assets/icons -o assets/icons.fcpkg \
+  --filter "**/*.{js,html}"
+```
+
+### no-img-upgrade
+
+排除图片文件对应的 webp/avif 版本，避免无意义的图片升级。
+
+例如存在 `foo.jpg`、`foo.jpg.webp`、`foo.jpg.avif` 文件，开启该选项后只打包 `foo.jpg`，忽略 webp 和 avif 版本。
+
+
+### list
+
+查看资源包内容：
+
+```bash
+freecdn pack --list bundle.fcpkg
+```
+
+### 备注
+
+资源包格式很简单：
+
+* 一个 JSON，记录每个文件的 HTTP 响应头（其中 content-length 字段必选，记录文件长度）
+
+* 分隔符 `\r` (0x0D)
+
+* 所有文件合并后的数据（按 JSON key 的顺序）
+
+如果打包的目录为 assets，那么文件 assets/1.gif 在资源包中的路径为 `1.gif`（无 `/` 前缀）。
 
 
 # 环境变量

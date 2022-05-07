@@ -45,14 +45,16 @@ program
   .option('--verify-sign',          '校验输入清单的签名')
   .action(manifestRun)
 
-// program
-//   .command('pack')
-//   .description('资源打包')
-//   .option('-i, --input <path>',     '需打包的文件目录')
-//   .option('-f, --filter <glob>',    '需过滤的文件，使用 glob 匹配', '**')
-//   .option('-o, --output <file>',    '保存路径')
-//   .option('-l, --list <file>',      '显示资源包内容')
-//   .action(packRun)
+program
+  .command('pack')
+  .description('资源打包')
+  .option('-i, --input <path>',     '需打包的目录')
+  .option('-f, --filter <glob>',    '需过滤的文件，使用 glob 匹配', '**')
+  .option('-o, --output <file>',    '保存路径')
+  .option('--headers <json>',       '配置 HTTP 响应头，使用 JSON 字符串或文件路径')
+  .option('--no-img-upgrade',       '排除图片文件对应的 webp/avif 版本')
+  .option('-l, --list <file>',      '显示资源包内容')
+  .action(packRun)
 
 program
   .command('db')

@@ -800,6 +800,56 @@ stream=on | off
 Hash 参数也有禁用数据流的效果，因此设置 Hash 后不必再使用该参数。
 
 
+# bundle
+
+文件内容从指定的资源包中提取。
+
+## 格式
+
+```
+bundle=PACKAGE_URL
+```
+
+* PACKAGE_URL: 资源包 URL。可以是清单中的原文件，但请勿循环依赖
+
+资源包生成参考 [freecdn pack](../cli/README.md#pack) 文档。
+
+## 演示
+
+```bash
+# 使用目录匹配
+/emoji-icons/assets/
+	bundle=/icons.fcpkg
+
+/icons.fcpkg
+	https://npm.elemecdn.com/free-host@0.0.0-v90rEGxJwu2TBCPV/index.js
+	https://unpkg.com/free-host@0.0.0-v90rEGxJwu2TBCPV/index.js
+	https://cdn.jsdelivr.net/npm/free-host@0.0.0-v90rEGxJwu2TBCPV/index.js
+	hash=1048576;onDac6KIBKj+JIjn026vj8rI6SqPI1fCGcTRZUExqJk=,sXv/uBmv4WzCCIjfaCCXccQRkwG6i3/GodF8l9El6SY=
+	size=1090870
+```
+
+访问 https://freecdn.etherdream.com/emoji-icons/ 可见页面中有大量图片。打开控制台观察，实际只加载了几个资源，这些图片都由 Service Worker 从资源包中提取。
+
+资源包支持自定义每个文件的 HTTP 响应头，可在打包时配置。由于程序默认会丢弃原始响应头，因此需通过 `headers` 参数进行保留。例如：
+
+```bash
+/emoji-icons/assets/
+	bundle=/icons.fcpkg
+	headers={"*": ""}
+```
+
+## 应用场景
+
+使用该方案，你可将网站中不常更新的零碎小文件打包成资源包，从而减少网络请求。
+
+即使资源包加载失败，程序会从原地址加载相应的文件，确保稳定性。
+
+## 备注
+
+如果个别小文件有更新，也不必重新发布资源包，只需在清单中单独定义该文件即可，因为文件的优先级高于目录。之后变更较大时再更新资源包。这样可减少打包发布的次数，前端也更省流量。
+
+
 # 参数优先级
 
 参数并不以清单中的顺序生效，而是按 [内置的优先级](https://github.com/EtherDream/freecdn-js/blob/master/core-lib/src/url-conf.ts)。

@@ -10,7 +10,7 @@ import * as util from './util'
 const BLOCK_SIZE = 1024 * 1024
 const IMAGE_EXTS = 'jpg,jpeg,png,apng,gif,ico,bmp,webp,avif'
 const MHASH_EXTS = process.env['FREECDN_MHASH_EXT'] ||
-                  `${IMAGE_EXTS},pdf,webm,acc,ogg,flac,opus,m4a,mp4,mp3,wav`
+                  `${IMAGE_EXTS},pdf,webm,acc,ogg,flac,opus,m4a,mp4,mp3,wav,fcpkg`
 
 const mMHashExts = new Set(MHASH_EXTS.split(','))
 const mImageExts = new Set(IMAGE_EXTS.split(','))
