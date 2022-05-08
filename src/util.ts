@@ -196,11 +196,8 @@ export function getFileExt(url: string) {
   if (url.includes('?')) {
     url = url.split('?')[0]
   }
-  const pos = url.lastIndexOf('.')
-  if (pos === -1) {
-    return ''
-  }
-  return url.substring(pos + 1)
+  const m = url.match(/\.(\w+)$/)
+  return m ? m[1] : ''
 }
 
 export function getPair(
