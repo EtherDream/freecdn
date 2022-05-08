@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.1
+
+### ⚙️ js
+
+* bundle 参数支持使用 index.html 作为目录首页
+
 ## v0.2.0
 
 ### ⚙️ js
