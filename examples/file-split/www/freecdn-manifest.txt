@@ -1,0 +1,3 @@
+/test.xz
+  concat=10MiB /test.xz.parts/[00-27]
+  size=283509852

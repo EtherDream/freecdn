@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.3
+
+### ⚙️ js
+
+* 新增 [concat](docs/manifest/params.md#concat) 参数，可合并多个 URL 的内容
+
 ## v0.2.2
 
 ### ⚙️ js

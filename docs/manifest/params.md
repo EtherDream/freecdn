@@ -64,10 +64,14 @@ hash=[BLK_LEN;]B1_HASH[,B2_HASH,...,Bn_HASH]
 
 因此合理配置 hash 数，有助于提高媒体资源的加载体验。通过工具生成的清单，默认会为媒体文件设置多个 Hash。
 
+## 备注
+
+Hash 校验的是最终呈现给页面的数据，而不是原始 URL 的数据。
+
 
 # pos
 
-指定文件读取位置，跳过开头数据。
+指定文件读取位置，跳过开头数据。[效果演示](../../examples/free-host/README.md#图床空间)
 
 ## 格式
 
@@ -802,7 +806,7 @@ Hash 参数也有禁用数据流的效果，因此设置 Hash 后不必再使用
 
 # bundle
 
-文件内容从指定的资源包中提取。
+文件内容从指定的资源包中提取。[效果演示](../../examples/bundle/)
 
 ## 格式
 
@@ -810,7 +814,7 @@ Hash 参数也有禁用数据流的效果，因此设置 Hash 后不必再使用
 bundle=PACKAGE_URL
 ```
 
-* PACKAGE_URL: 资源包 URL。可以是清单中的原文件，但请勿循环依赖
+* PACKAGE_URL: 资源包地址。可以是远程 URL，也可以是清单中的文件（不支持递归）
 
 资源包生成参考 [freecdn pack](../cli/README.md#pack) 文档。
 
@@ -850,11 +854,65 @@ bundle=PACKAGE_URL
 如果个别小文件有更新，也不必重新发布资源包，只需在清单中单独定义该文件即可，因为文件的优先级高于目录。之后变更较大时再更新资源包。这样可减少打包发布的次数，前端也更省流量。
 
 
+# concat
+
+文件内容使用多个 URL 合并后的结果。[效果演示](../../examples/file-split/)
+
+## 格式
+
+```
+concat=[PART_LEN] URL1 URL2 ... URLn
+```
+
+* PART_LEN: 标记每个文件（最后个除外）的内容长度，[字节单位](unit.md#字节单位)。（可选）
+
+* URL: 可以是远程地址，也可以是清单中的文件
+
+如果 PART_LEN 省略，那么 Range 请求将无法定位起始文件，导致流量浪费（播放视频需 Range 请求）
+
+URL 可用 `[begin-end]` 表示连续的数字。例如 `/foo.[1-20]` 表示 `/foo.1`、`/foo.2`、...、`/foo.20` 20 个文件。
+
+如果 begin 以 `0` 开头，那么每个数字都会被填充成固定长度。例如 `/foo.[01-20]` 表示 `/foo.01`、`/foo.02`、...、`/foo.20`。
+
+## 演示
+
+```bash
+/cat.txt
+	concat=/cat-hello.txt /cat-world.txt /cat-123.txt
+```
+
+访问 https://freecdn.etherdream.com/cat.txt 显示 `HelloWorld123`，内容由上述 3 个文件合并而成。
+
+```bash
+/bbb.mp4
+	concat=10MiB https://unpkg.com/free-host@0.0.0-bbb-[00-33]/main.bin
+	size=355856562
+```
+
+访问 https://freecdn.etherdream.com/bbb.mp4 可显示视频。拖动视频进度条，程序会根据 Range 请求的范围，加载相应的小文件。
+
+## 应用场景
+
+由于很多免费 CDN 对单个文件有体积限制，因此无法上传大文件。现在只需将大文件切成多个小文件，运行时通过该参数即可自动合并。
+
+```bash
+/raspios.xz
+	concat=10MiB https://unpkg.com/free-host@0.0.0-raspios-[00-27]/main.bin
+	size=283509852
+```
+
+访问 https://freecdn.etherdream.com/raspios.xz 可下载一个 270MiB 的大文件（树莓派系统镜像文件）。
+
+打开控制台可见，实际加载的并非一个大文件，而是多个 10MiB 的文件。但在页面看来这仍是一个独立的大文件，并且可以保存下载。
+
+## 备注
+
+大文件推荐设置 size 参数注明文件长度，这样下载时可显示进度，用户体验更好。（光靠分片长度和分片数量，是无法推算出文件长度的，因为最后一片的长度未知）
+
+
 # 参数优先级
 
 参数并不以清单中的顺序生效，而是按 [内置的优先级](https://github.com/EtherDream/freecdn-js/blob/master/core-lib/src/url-conf.ts)。
-
-例如 hash 校验的是最终呈现的数据，而不是裁剪、拼接、解压前的数据。
 
 
 # 系统预设参数

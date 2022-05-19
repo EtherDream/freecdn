@@ -6,6 +6,8 @@ freecdn 是一个纯前端的 CDN 解决方案，用于降低网站流量成本�
 
 # 最近更新
 
+新增文件合并功能，可将大文件切割成多个小文件，运行时自动合并。从而能突破免费 CDN 单个文件体积限制。
+
 新增资源包功能，可将多个小文件合并成一个资源包，运行时从中提取。[查看更多](CHANGELOG.md)
 
 # 功能亮点
@@ -65,6 +67,8 @@ freecdn 使用独特的更新机制，只需更新一个清单文件，就能更
 
 * [📦 多个小文件合并成资源包](examples/bundle/)
 
+* [将大文件切分成多个小文件](examples/file-split/)
+
 * [POST 请求代理](examples/post-proxy/)
 
 # 常用文档
@@ -120,8 +124,6 @@ freecdn-update-svc：https://github.com/EtherDream/freecdn-update-svc
 目前开发中的功能：
 
 * 更智能的站点选择算法（目前规则还很简单，需进一步完善）
-
-* 大文件拆分（将大文件拆分成多个小文件，使用时自动合并。从而符合免费 CDN 的上传体积限制）
 
 * 纯前端日志（通过 Service Worker 采集用户访问日志，发送到开发者提供的接口。适用于 GitHub Pages 等无法查看详细日志的站点）
 

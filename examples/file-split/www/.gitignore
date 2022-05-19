@@ -1,0 +1,5 @@
+*.mp4
+*.xz
+*.parts
+debug.*
+!freecdn-manifest.txt
