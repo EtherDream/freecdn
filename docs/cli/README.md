@@ -43,10 +43,10 @@ freecdn find
 
 ### filter
 
-过滤需搜索的文件，使用 glob 格式。例如只搜索 js 文件：
+过滤需搜索的文件，使用 glob 格式。例如只搜索 JS 和 HTML 文件：
 
 ```bash
-freecdn find --filter "**/*.js"
+freecdn find --filter "**/*.{js,html}"
 ```
 
 例如排除 php、aspx 文件：
