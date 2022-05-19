@@ -1,6 +1,6 @@
 {
   "name": "freecdn",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "author": "EtherDream",
   "license": "MIT",
   "description": "A tool that can reduce website bandwidth costs",
@@ -32,7 +32,7 @@
   "dependencies": {
     "colors": "^1.4.0",
     "commander": "^9.0.0",
-    "freecdn-js": "^0.3.2",
+    "freecdn-js": "^0.4.0",
     "freecdn-publib": "^0.1.2",
     "glob": "^7.1.7",
     "node-fetch": "^2.6.1",
