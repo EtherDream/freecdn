@@ -66,7 +66,7 @@ function packOption(
   try {
     filePaths = glob.sync(filter, {
       nodir: true,
-      cwd: input || '.',
+      cwd: input,
     })
   } catch (err: any) {
     console.error(err.message)
@@ -196,7 +196,7 @@ export async function run(args: any, program: Command) {
     listOption(args.list)
     return
   }
-  if (!args.output) {
+  if (!args.input || !args.output) {
     program.outputHelp()
     return
   }
