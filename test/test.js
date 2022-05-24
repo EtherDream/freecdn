@@ -255,7 +255,7 @@ describe('cmd js', () => {
     expect(read('freecdn-loader.min.js'))
       .include('https://unpkg.com/')
       .include('https://cdn.jsdelivr.net')
-      .include('https://code.bdstatic.com/')
+      .include('https://npm.elemecdn.com/')
       .include(pk)
 
     freecdnJs.buildFiles.forEach(file => {
@@ -270,7 +270,7 @@ describe('cmd js', () => {
     expect(read('freecdn-loader.min.js'))
       .include('https://unpkg.com/')
       .include('https://cdn.jsdelivr.net')
-      .not.include('https://code.bdstatic.com/')
+      .not.include('https://npm.elemecdn.com/')
   })
 
   it('cdn custom url', () => {
@@ -290,7 +290,7 @@ describe('cmd js', () => {
       .include('0,"freecdn-internal/')    // setTimeut(?,0,"..."
       .not.include('https://unpkg.com/')
       .not.include('https://cdn.jsdelivr.net')
-      .not.include('https://code.bdstatic.com/')
+      .not.include('https://npm.elemecdn.com/')
   })
 
   it('setup sw', () => {

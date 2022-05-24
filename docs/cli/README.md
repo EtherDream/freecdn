@@ -102,7 +102,6 @@ freecdn js --make
 
 * unpkg
 * jsdelivr
-* bdstatic
 * elemecdn
 
 如果未设置该参数，默认使用所有内置 CDN。如果参数为 `none` 则不使用 CDN。

@@ -28,7 +28,7 @@ program
   .description('维护前端文件')
   .option('-m, --make',             '创建前端资源')
   .option('--cdn <urls>',           '指定主脚本从哪些 URL 加载，使用空白符分隔\n' +
-                                    '内置值：jsdelivr, unpkg, bdstatic, elemecdn\n' +
+                                    '内置值：jsdelivr, unpkg, elemecdn\n' +
                                     '默认使用所有内置 CDN。参数为 none 则不使用外部 URL')
   .option('--setup-sw <file>',      '共享接入模式。插入代码到已有的 Service Worker 文件')
   .option('--dev',                  '开发模式。前端文件使用调试版本')

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 🛠️ cli
+
+* 移除 code.bdstatic.com 站点（无法和 NPM 保持同步）
+
 ## v0.3.0
 
 ### ⚙️ js

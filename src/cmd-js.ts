@@ -10,7 +10,6 @@ const LOADER_MIN = 'freecdn-loader.min.js'
 const JS_VER = freecdnJs.ver
 
 const CDN_URL_MAP: {[k: string]: string} = {
-  bdstatic: `https://code.bdstatic.com/npm/freecdn-js@${JS_VER}/dist/freecdn-main.min.js`,
   elemecdn: `https://npm.elemecdn.com/freecdn-js@${JS_VER}/dist/freecdn-main.min.js`,
   unpkg: `https://unpkg.com/freecdn-js@${JS_VER}/dist/freecdn-main.min.js`,
   jsdelivr: `https://cdn.jsdelivr.net/npm/freecdn-js@${JS_VER}/dist/freecdn-main.min.js`,
