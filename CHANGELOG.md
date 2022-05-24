@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.3.1
+
+### ⚙️ js
+
+* bundle 参数支持流模式，可边加载边提取，无需等整个资源包下载完成才能提取
+
 ### 🛠️ cli
 
 * 移除 code.bdstatic.com 站点（无法和 NPM 保持同步）
