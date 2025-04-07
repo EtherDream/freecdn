@@ -48,7 +48,7 @@ async function genKey() {
   const pair = await subtle.generateKey({
     name: 'ECDSA',
     namedCurve: 'P-256'
-  }, true, [])
+  }, true, ['sign', 'verify'])
 
   const publicKeyBuf = await subtle.exportKey('spki', pair.publicKey as CryptoKey)
   const privateKeyBuf = await subtle.exportKey('pkcs8', pair.privateKey as CryptoKey)
